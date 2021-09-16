@@ -3,7 +3,7 @@ import asyncio, aiohttp, os
 from json import loads
 from typing import Callable
 from random import choice as CH
-from utils import Environ
+from utils import Environ, check_version
 
 API_URL: str = "https://api.vk.com/method/"
 os_command: str = "clear" if os.name != "nt" else "cls"
@@ -52,6 +52,9 @@ class LongPoll:
 		if not Environ("DEBUG").get():
 			os.system(os_command)
 		print("Starting...")
+		if not check_version():
+			print("A new version of the engine is available!\n\
+https://github.com/SekaiTeam/cloudlet_engine")
 		self.wait: int = 25
 		self.data: dict = {"server": None, "key": None, "ts": None}
 		self.is_work: bool = True
