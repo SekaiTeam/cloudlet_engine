@@ -1,0 +1,7 @@
+__pycache__
+env
+venv
+.idea
+.env
+*.sqlite3
+.DS_Store
