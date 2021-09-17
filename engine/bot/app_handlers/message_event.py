@@ -14,7 +14,7 @@ async def message_event(
 					) -> None:
 
 	data = await api("users.get", {"user_ids": item['object']['user_id']})
-	user = self.load_or_create(data['response'][0])
+	user = lor(data['response'][0])
 	callback_command = item['object']['payload']['button'].split()
 	msg.path_args = callback_command
 
