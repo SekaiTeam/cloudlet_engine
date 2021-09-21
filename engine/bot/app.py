@@ -2,6 +2,7 @@ import time
 import asyncio, aiohttp, re
 import os, importlib, uvloop
 
+from pathlib import Path
 from engine.bot import handler
 from engine.models import Account
 from engine.bot.app_handlers import message_new, message_event
@@ -21,9 +22,9 @@ class VKBot:
 
 	async def start_bot(self):
 		Account.TempBot.bot = api
-		self.read_handlers()
 		self.longpoll = LongPoll()
 		await self.longpoll.get_server()
+		self.read_handlers()
 		
 		@self.longpoll.event()
 		async def _(item):
@@ -35,11 +36,8 @@ class VKBot:
 		await self.longpoll.update()
 
 	def read_handlers(self):
-		for root, dirs, files in os.walk('engine/bot/commands'):
-			check_extension = filter(lambda x: x.endswith('.py'), files)
-			for command in check_extension:
-				path = os.path.join(root, command)
-				spec = importlib.util.spec_from_file_location(command, os.path.abspath(path))
-				module = importlib.util.module_from_spec(spec)
-				spec.loader.exec_module(module)
-
+		path = Path(__file__).resolve().parent.parent.joinpath("bot/commands/")
+		for command in path.rglob('**/*.py'):
+			spec = importlib.util.spec_from_file_location(command.name, command)
+			module = importlib.util.module_from_spec(spec)
+			spec.loader.exec_module(module)
