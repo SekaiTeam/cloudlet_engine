@@ -23,8 +23,8 @@ class VKBot:
 	async def start_bot(self):
 		Account.TempBot.bot = api
 		self.longpoll = LongPoll()
-		await self.longpoll.get_server()
 		self.read_handlers()
+		await self.longpoll.get_server()
 		
 		@self.longpoll.event()
 		async def _(item):
@@ -36,7 +36,7 @@ class VKBot:
 		await self.longpoll.update()
 
 	def read_handlers(self):
-		path = Path(__file__).resolve().parent.parent.joinpath("bot/commands/")
+		path = Path(__file__).resolve().parent.joinpath("commands/")
 		for command in path.rglob('**/*.py'):
 			spec = importlib.util.spec_from_file_location(command.name, command)
 			module = importlib.util.module_from_spec(spec)

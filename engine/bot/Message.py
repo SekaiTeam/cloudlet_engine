@@ -79,9 +79,7 @@ class Message:
 																			  	  "color": "secondary" if not button.keys() & {'color'} else button['color']})
 	
 	def keyboard_default(self):
-		self.buttons([{"name": "Бонус", "color": "positive"}, {"name": "Профиль", "color": "primary"}])
-		self.buttons({"name": "Помощь", "color": "positive"})
-		self.set_keyboard_default = True
+		pass
 
 	async def __call__(self, text=None, attachment=None, sticker_id=None, user_id=None, user_ids=None, reply_to=None, forward_messages=None):
 		if text == None and attachment == None and sticker_id == None:

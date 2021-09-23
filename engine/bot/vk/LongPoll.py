@@ -3,7 +3,7 @@ import asyncio, aiohttp, os
 from json import loads
 from typing import Callable
 from random import choice as CH
-from utils import Environ, check_version
+from utils import get_version, get_changelog, Environ, console
 
 API_URL: str = "https://api.vk.com/method/"
 os_command: str = "clear" if os.name != "nt" else "cls"
@@ -20,7 +20,7 @@ async def get(url: str = API_URL, method: str = "", params: dict = {}) -> dict:
 		return loads(response)
 	except Exception as e:
 		if Environ("DEBUG").get():
-			print(e)
+			console.error(e)
 		await session.close()
 		return await get(url, method, params)
 
@@ -36,7 +36,7 @@ async def post(url: str = API_URL, method: str = "", params: dict = {}) -> dict:
 		return loads(response)
 	except Exception as e:
 		if Environ("DEBUG").get():
-			print(e)
+			console.error(e)
 		await session.close()
 		return await post(url, method, params)
 
@@ -44,21 +44,26 @@ async def api(method: str = "", params: dict = {}) -> dict:
 	params.update({'access_token': CH(Environ("BOT_TOKENS").get()), 'group_id': Environ("GROUP_ID").get(), "v": Environ("API_V").get()})
 	response: dict = await post(method = method, params=params)
 	if Environ("DEBUG").get():
-		print(response)
+		console.info(response)
 	return response
 
 class LongPoll:
 	def __init__(self):
+
 		if not Environ("DEBUG").get():
 			os.system(os_command)
-		print("Starting...")
-		if not check_version():
-			print("A new version of the engine is available!\n\
-https://github.com/SekaiTeam/cloudlet_engine")
+		console.info("Starting...")
+
+		self.__checking_updates()
 		self.wait: int = 25
 		self.data: dict = {"server": None, "key": None, "ts": None}
 		self.is_work: bool = True
 		self.func: Callable[[dict], None] = None
+
+	def __checking_updates(self):
+		if not get_version():
+			console.warning(f"\n\n\tA new version of the engine is available!\n\
+\thttps://github.com/SekaiTeam/cloudlet_engine\n{get_changelog()}\n")
 
 	async def get_server(self):
 		response: dict = await api("groups.getLongPollServer")
@@ -72,7 +77,7 @@ https://github.com/SekaiTeam/cloudlet_engine")
 		return wrapper
 
 	async def update(self):
-		print("Loading is Done :)")
+		console.info("Loading is Done :)")
 		while self.is_work:
 			if self.data["ts"] is None:
 				await self.get_server()
@@ -80,7 +85,7 @@ https://github.com/SekaiTeam/cloudlet_engine")
 			longpoll_response: dict = await get(f'{self.data["server"]}?act=a_check&key={self.data["key"]}&ts={self.data["ts"]}&wait={self.wait}')
 
 			if Environ("DEBUG").get():
-				print(f"[Cloudlet Engine] {longpoll_response}")
+				console.info(f"[Cloudlet Engine] {longpoll_response}")
 
 			if "failed" in longpoll_response:
 				self.handle_error(longpoll_response)

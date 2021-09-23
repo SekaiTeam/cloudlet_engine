@@ -1,0 +1,28 @@
+CloudletEngine v1.0.3 [CHANGELOG]
+
+Добавлена главная страница документации - Docs
+
+utils:
+    Добавлен console.py
+    check_version.py:
+        Изменена функция get_version
+        Добавлена функция get_changelog
+        Добавлена функция requests
+
+engine/bot/engine_message:
+    error_message.py:
+        Изменена функция для отправки сообщения при ошибке
+
+engine/bot/vk:
+    LongPoll.py:
+        Множественные изменения
+
+engine/bot:
+    Message.py:
+        Убрана дефолтная клавиатура
+    app.py:
+        Изменения в функции read_handlers
+    
+
+
+
